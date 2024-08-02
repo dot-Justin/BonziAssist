@@ -1,0 +1,4 @@
+requests
+simpleaudio
+urllib3
+speech-recognition
