@@ -1,15 +1,14 @@
-from helpers import mic
+from helpers import mic, llm, tts
 import pyaudio
 import wave
 import random
 import os
-import json
 import time
-from datetime import datetime
+import json
 from vosk import Model, KaldiRecognizer
 
 class BonziResponse:
-    def __init__(self, canned_directory="canned/"):
+    def __init__(self, canned_directory="canned_responses/"):
         self.canned_directory = canned_directory
         self.canned_responses = [os.path.join(canned_directory, f) for f in os.listdir(canned_directory) if f.endswith('.wav')]
         self.preloaded_audio = self.preload_audio_files()
@@ -48,7 +47,8 @@ def listen_for_bonzi(device_index=None):
     stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000, input_device_index=device_index)
     stream.start_stream()
 
-    keywords = ["bonzi", "bones you", "bones", "ponzi", "bondi", "banking", "donkey", "bonds it", "bons it", "juan the", "bungie", "bons the", "bonds the", "monte", "pansy", "bonds a", "bonds a", "bundy", "bonnie", "money", "bunny"]
+    keywords = ["bonzi", "bones you", "bones", "ponzi", "bondi", "banking", "bouncy", "monsey", "bonds it", "bons it", "juan the", "bungie", "bons the", "bonds the", "monte", "pansy", "bonds a", "bonds a", "bundy", "bonnie", "money", "bunny"]
+    command_active = False
 
     while True:
         data = stream.read(4000, exception_on_overflow=False)
@@ -56,19 +56,24 @@ def listen_for_bonzi(device_index=None):
             result = recognizer.Result()
             text = json.loads(result).get("text", "")
             print(f"Heard: {text}")
+
+            if command_active:
+                # Directly use the first captured text as the command
+                if text:
+                    llm_response = llm.request(text.strip())
+                    print(f"LLM response: {llm_response}")
+                    tts.say(llm_response)
+                command_active = False  # Reset after processing
+
             words = text.split()
-            if any(keyword in text for keyword in keywords) and len(words) < 4:
-                stream.stop_stream()  # Stop listening
+            if any(keyword in text for keyword in keywords) and len(words) < 4 and not command_active:
                 bonzi_response.play_random_response()
-                time.sleep(1)  # Pause listening for 1 second
-                stream.start_stream()  # Restart listening
+                time.sleep(.45)
+                command_active = True  # Enable command capture
 
 if __name__ == "__main__":
-    print("Available microphones:")
-    mic.list_microphones()
-    p = pyaudio.PyAudio()
-    num_devices = p.get_host_api_info_by_index(0).get('deviceCount')
-    p.terminate()
-    device_index = mic.get_device_index(num_devices)
-    print(f"Selected Input Device id: {device_index}")
+    config = mic.load_config()
+    if config is None or config.get("prompt_every_time", False):
+        config = mic.configure_microphone()
+    device_index = config['device_index']
     listen_for_bonzi(device_index)

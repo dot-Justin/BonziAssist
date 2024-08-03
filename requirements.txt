@@ -1,4 +1,5 @@
-requests
+pyaudio
+python-dotenv
+litellm
 simpleaudio
-urllib3
-speech-recognition
+vosk
