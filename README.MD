@@ -34,6 +34,7 @@ You will be prompted to configure your microphone settings upon the first run or
 - [ ] **Offline Functionality**: Use fully offline APIs such as Ollama for those with beefier computers
 - [ ] **Add Voice Volume Control**
 - [ ] **Add simple windows functions**: Such as Media control, opening apps, etc.
+- [ ] **Add interruption support**: Potentially via a hotkey (press esc to interrupt)
 - [ ] **Add fancy splash screen**
 
 #### Continuous goals
