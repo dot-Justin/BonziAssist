@@ -1,20 +1,37 @@
 import requests
 import simpleaudio as sa
 import io
+import wave
+import audioop
 from urllib.parse import quote_plus
 #Adapted from my project https://github.com/dot-Justin/BonziBuddy-TTS
 #Credit to https://www.tetyys.com/SAPI4/
 
-def say(text):
+def say(text, volume=1.0):
+    """Speak the provided text using the BonziBuddy voice."""
     encoded_text = quote_plus(text)
-    tts_url = f"https://www.tetyys.com/SAPI4/SAPI4?text={encoded_text}&voice=Adult%20Male%20%232%2C%20American%20English%20(TruVoice)&pitch=140&speed=157"
+    tts_url = (
+        f"https://www.tetyys.com/SAPI4/SAPI4?text={encoded_text}"
+        "&voice=Adult%20Male%20%232%2C%20American%20English%20(TruVoice)"
+        "&pitch=140&speed=157"
+    )
     response = requests.get(tts_url)
     if response.status_code == 200:
         with open("output.mp3", "wb") as f:
             f.write(response.content)
 
-        wave_obj = sa.WaveObject.from_wave_file(io.BytesIO(response.content))
-        
+        wave_io = io.BytesIO(response.content)
+        wf = wave.open(wave_io, "rb")
+        audio_data = wf.readframes(wf.getnframes())
+        audio_data = audioop.mul(audio_data, wf.getsampwidth(), volume)
+        wave_obj = sa.WaveObject(
+            audio_data,
+            wf.getnchannels(),
+            wf.getsampwidth(),
+            wf.getframerate(),
+        )
+        wf.close()
+
         play_obj = wave_obj.play()
         play_obj.wait_done()
     else:

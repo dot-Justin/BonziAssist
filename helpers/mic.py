@@ -2,7 +2,7 @@ import pyaudio
 import os
 import json
 
-CONFIG_FILE = "config\mic_config.json"
+CONFIG_FILE = "mic_config.json"
 
 def list_microphones():
     p = pyaudio.PyAudio()
@@ -52,9 +52,16 @@ def configure_microphone():
     p.terminate()
     device_index = get_device_index(num_devices, default_device_index, default_device_name)
     prompt_every_time = input("Do you want to be prompted to select a microphone every time? (y/n): ").strip().lower()
+    volume_input = input("Enter voice volume (0.0-1.0, default 1.0): ").strip()
+    try:
+        volume = float(volume_input) if volume_input else 1.0
+    except ValueError:
+        volume = 1.0
+    volume = max(0.0, min(1.0, volume))
     config = {
         "device_index": device_index,
-        "prompt_every_time": prompt_every_time == 'y'
+        "prompt_every_time": prompt_every_time == 'y',
+        "volume": volume
     }
     save_config(config)
     return config
