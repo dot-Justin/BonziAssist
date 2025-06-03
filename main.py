@@ -5,7 +5,16 @@ import random
 import os
 import time
 import json
+import subprocess
+import platform
 from vosk import Model, KaldiRecognizer
+
+
+def show_splash():
+    splash_path = os.path.join(os.path.dirname(__file__), "splash")
+    if os.path.exists(splash_path):
+        with open(splash_path, "r") as f:
+            print(f.read())
 
 class BonziResponse:
     def __init__(self, canned_directory="canned_responses/"):
@@ -37,7 +46,23 @@ class BonziResponse:
         response = random.choice(self.canned_responses)
         self.play_audio(response)
 
-def listen_for_bonzi(device_index=None):
+
+def handle_system_commands(text, volume):
+    """Execute simple Windows commands if detected."""
+    if platform.system() != "Windows":
+        return False
+    command = text.lower()
+    if "open notepad" in command:
+        subprocess.Popen(["notepad"])
+        tts.say("Opening Notepad", volume=volume)
+        return True
+    if "open calculator" in command:
+        subprocess.Popen(["calc"])
+        tts.say("Opening Calculator", volume=volume)
+        return True
+    return False
+
+def listen_for_bonzi(device_index=None, volume=1.0):
     model_path = "vosk/vosk-model-small-en-us-0.15"
     model = Model(model_path)
     recognizer = KaldiRecognizer(model, 16000)
@@ -60,9 +85,12 @@ def listen_for_bonzi(device_index=None):
             if command_active:
                 # Directly use the first captured text as the command
                 if text:
+                    if handle_system_commands(text, volume):
+                        command_active = False
+                        continue
                     llm_response = llm.request(text.strip())
                     print(f"LLM response: {llm_response}")
-                    tts.say(llm_response)
+                    tts.say(llm_response, volume=volume)
                 command_active = False  # Reset after processing
 
             words = text.split()
@@ -72,8 +100,10 @@ def listen_for_bonzi(device_index=None):
                 command_active = True  # Enable command capture
 
 if __name__ == "__main__":
+    show_splash()
     config = mic.load_config()
     if config is None or config.get("prompt_every_time", False):
         config = mic.configure_microphone()
-    device_index = config['device_index']
-    listen_for_bonzi(device_index)
+    device_index = config["device_index"]
+    volume = config.get("volume", 1.0)
+    listen_for_bonzi(device_index, volume)
