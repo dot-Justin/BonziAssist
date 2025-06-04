@@ -3,3 +3,5 @@ python-dotenv
 litellm
 simpleaudio
 vosk
+
+pyautogui
