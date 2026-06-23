@@ -25,6 +25,17 @@ python main.py
 
 You will be prompted to configure your microphone settings upon the first run or if you choose to be prompted every time by the configuration settings.
 
+### First run checklist
+If BonziAssist does not start after installation, check these items first:
+
+1. Run commands from the repository root, the same folder that contains `main.py` and `mic_config.json`.
+2. Copy `helpers\.env.example` to `helpers\.env`, then fill in the required values in that new file.
+3. Install the dependencies with `pip install -r requirements.txt`.
+4. Start the app with `python main.py`.
+5. When the microphone prompt appears, select the input device you want BonziAssist to listen through.
+
+The microphone choice is saved in `mic_config.json`, so you normally only need to configure it once. If the wrong microphone was selected, delete or edit `mic_config.json` and run `python main.py` again.
+
 ## TODO
 
 - [x] **Add LiteLLM**: Enable Bonzi to talk back to you
