@@ -1,4 +1,4 @@
-from helpers import mic, llm, tts
+from helpers import mic
 import pyaudio
 import wave
 import random
@@ -60,6 +60,8 @@ def listen_for_bonzi(device_index=None):
             if command_active:
                 # Directly use the first captured text as the command
                 if text:
+                    from helpers import llm, tts
+
                     llm_response = llm.request(text.strip())
                     print(f"LLM response: {llm_response}")
                     tts.say(llm_response)
@@ -75,5 +77,5 @@ if __name__ == "__main__":
     config = mic.load_config()
     if config is None or config.get("prompt_every_time", False):
         config = mic.configure_microphone()
-    device_index = config['device_index']
+    device_index = config["device_index"]
     listen_for_bonzi(device_index)

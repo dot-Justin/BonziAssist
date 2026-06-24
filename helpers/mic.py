@@ -1,10 +1,24 @@
-import pyaudio
 import os
 import json
+from pathlib import Path
 
-CONFIG_FILE = "config\mic_config.json"
+DEFAULT_CONFIG_FILE = Path(__file__).resolve().parents[1] / "mic_config.json"
+
+
+def get_config_file():
+    override = os.getenv("BONZI_MIC_CONFIG")
+    if override:
+        return Path(override).expanduser()
+    return DEFAULT_CONFIG_FILE
+
+
+def get_pyaudio():
+    import pyaudio
+
+    return pyaudio
 
 def list_microphones():
+    pyaudio = get_pyaudio()
     p = pyaudio.PyAudio()
     info = p.get_host_api_info_by_index(0)
     num_devices = info.get('deviceCount')
@@ -34,18 +48,26 @@ def get_device_index(num_devices, default_device_index, default_device_name):
         print("Invalid input. Please enter a valid number.")
 
 def load_config():
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
+    config_file = get_config_file()
+    if config_file.exists():
+        with config_file.open("r", encoding="utf-8") as f:
+            config = json.load(f)
+        if "device_index" not in config and "mic_index" in config:
+            config["device_index"] = config["mic_index"]
+        config.setdefault("prompt_every_time", False)
+        return config
     return None
 
 def save_config(config):
-    with open(CONFIG_FILE, "w") as f:
+    config_file = get_config_file()
+    config_file.parent.mkdir(parents=True, exist_ok=True)
+    with config_file.open("w", encoding="utf-8") as f:
         json.dump(config, f, indent=4)
 
 def configure_microphone():
     print("Available microphones:")
     default_device_name = list_microphones()
+    pyaudio = get_pyaudio()
     p = pyaudio.PyAudio()
     num_devices = p.get_host_api_info_by_index(0).get('deviceCount')
     default_device_index = p.get_default_input_device_info().get('index')
