@@ -1,5 +1,6 @@
 import io
 import json
+import os
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -18,6 +19,27 @@ class MicConfigTests(unittest.TestCase):
             mic.DEFAULT_CONFIG_FILE,
             Path(mic.__file__).resolve().parents[1] / "mic_config.json",
         )
+
+    def test_environment_override_controls_config_path(self):
+        previous_override = os.environ.get(mic.CONFIG_ENV_VAR)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            config_path = Path(tmp) / "custom" / "mic_config.json"
+            try:
+                os.environ[mic.CONFIG_ENV_VAR] = str(config_path)
+
+                mic.save_config({"device_index": 4, "prompt_every_time": False})
+
+                self.assertTrue(config_path.exists())
+                self.assertEqual(
+                    mic.load_config(),
+                    {"device_index": 4, "prompt_every_time": False},
+                )
+            finally:
+                if previous_override is None:
+                    os.environ.pop(mic.CONFIG_ENV_VAR, None)
+                else:
+                    os.environ[mic.CONFIG_ENV_VAR] = previous_override
 
     def test_load_config_returns_none_when_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
