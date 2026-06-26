@@ -1,17 +1,19 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 import litellm
 
+load_dotenv(Path(__file__).with_name(".env"))
 load_dotenv()
 
 groq_api_key = os.getenv("GROQ_API_KEY")
 llm_provider = os.getenv("LLM_PROVIDER")
 
-if groq_api_key is None:
-    raise ValueError("GROQ_API_KEY environment variable not found. Please set it in your .env file.")
+if not groq_api_key:
+    raise ValueError("GROQ_API_KEY environment variable not found. Please set it in your helpers/.env file.")
 
-if llm_provider is None:
-    raise ValueError("LLM_PROVIDER environment variable not found. Please set it in your .env file.")
+if not llm_provider:
+    raise ValueError("LLM_PROVIDER environment variable not found. Please set it in your helpers/.env file.")
 
 os.environ["GROQ_API_KEY"] = groq_api_key
 
