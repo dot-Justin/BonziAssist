@@ -13,9 +13,33 @@ BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activate
 - **Real-Time Interaction**: Communicate in real-time, with responses generated through a lightweight LLM.
 
 ### Installation
-1. Clone this repository.
-2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). installed, and then run `pip install -r requirements.txt` to install the necessary packages.
-4. Set up your environment variables. Edit the `.env.example` file in `helpers\` and follow the instructions there. `[INSTRUCTIONS='Remove this line of instructions. Fill out the info below. Rename this file, and remove the .example. It should just be ".env" now.']`
+1. Clone this repository and open a terminal in the project folder:
+   ```bash
+   git clone https://github.com/dot-Justin/BonziAssist.git
+   cd BonziAssist
+   ```
+2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) installed.
+3. Install the Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Set up your environment variables by copying the example file:
+
+   Windows PowerShell:
+   ```powershell
+   Copy-Item helpers\.env.example helpers\.env
+   ```
+
+   macOS / Linux:
+   ```bash
+   cp helpers/.env.example helpers/.env
+   ```
+
+5. Open `helpers/.env`, remove the `INSTRUCTIONS=` line, and fill in your API settings:
+   ```env
+   LLM_PROVIDER=groq
+   GROQ_API_KEY=your-api-key-here
+   ```
 
 ### Usage
 To start BonziAssist:
@@ -24,6 +48,13 @@ python main.py
 ```
 
 You will be prompted to configure your microphone settings upon the first run or if you choose to be prompted every time by the configuration settings.
+
+If BonziAssist does not start, check these common setup issues:
+
+- `GROQ_API_KEY environment variable not found`: make sure `helpers/.env` exists and contains your real API key.
+- `pyaudio` install errors on Windows: install Visual C++ Build Tools, then rerun `pip install -r requirements.txt`.
+- Microphone problems: delete `mic_config.json` and run `python main.py` again to choose a microphone device.
+- Voice activation problems: say `Bonzi` clearly and wait for the response sound before speaking your command.
 
 ## TODO
 
