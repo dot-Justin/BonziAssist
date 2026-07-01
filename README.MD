@@ -14,8 +14,22 @@ BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activate
 
 ### Installation
 1. Clone this repository.
-2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). installed, and then run `pip install -r requirements.txt` to install the necessary packages.
-4. Set up your environment variables. Edit the `.env.example` file in `helpers\` and follow the instructions there. `[INSTRUCTIONS='Remove this line of instructions. Fill out the info below. Rename this file, and remove the .example. It should just be ".env" now.']`
+2. Ensure you have [Python](https://www.python.org/downloads/) installed.
+   - Windows users may also need [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
+   - macOS users may need PortAudio first: `brew install portaudio`.
+3. Install the Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Set up your environment variables:
+   ```bash
+   cp helpers/.env.example helpers/.env
+   ```
+   Then edit `helpers/.env` and set `LLM_PROVIDER` and `GROQ_API_KEY`.
+5. Confirm the local setup:
+   ```bash
+   python main.py --check
+   ```
 
 ### Usage
 To start BonziAssist:
@@ -23,7 +37,7 @@ To start BonziAssist:
 python main.py
 ```
 
-You will be prompted to configure your microphone settings upon the first run or if you choose to be prompted every time by the configuration settings.
+You will be prompted to configure your microphone settings upon the first run or if you choose to be prompted every time by the configuration settings. After startup, say "`Bonzi`" and wait for the confirmation sound before speaking your command.
 
 ## TODO
 

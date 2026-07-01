@@ -1,11 +1,31 @@
-from helpers import mic, llm, tts
-import pyaudio
+from helpers import mic, llm
+import argparse
+import importlib.util
+from pathlib import Path
 import wave
 import random
 import os
+import sys
 import time
 import json
-from vosk import Model, KaldiRecognizer
+
+PROJECT_DIR = Path(__file__).resolve().parent
+
+
+def load_vosk_classes():
+    original_path = list(sys.path)
+    old_vosk_module = sys.modules.pop("vosk", None)
+    try:
+        sys.path = [
+            path for path in sys.path
+            if Path(path or ".").resolve() != PROJECT_DIR
+        ]
+        import vosk
+        return vosk.Model, vosk.KaldiRecognizer
+    finally:
+        sys.path = original_path
+        if old_vosk_module is not None:
+            sys.modules["vosk"] = old_vosk_module
 
 class BonziResponse:
     def __init__(self, canned_directory="canned_responses/"):
@@ -38,13 +58,21 @@ class BonziResponse:
         self.play_audio(response)
 
 def listen_for_bonzi(device_index=None):
+    from helpers import tts
+
+    audio = mic.require_pyaudio()
+    try:
+        Model, KaldiRecognizer = load_vosk_classes()
+    except (ModuleNotFoundError, ImportError, AttributeError):
+        raise ModuleNotFoundError("Missing Python package: vosk. Run `pip install -r requirements.txt` first.")
+
     model_path = "vosk/vosk-model-small-en-us-0.15"
     model = Model(model_path)
     recognizer = KaldiRecognizer(model, 16000)
 
     bonzi_response = BonziResponse()
-    p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000, input_device_index=device_index)
+    p = audio.PyAudio()
+    stream = p.open(format=audio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000, input_device_index=device_index)
     stream.start_stream()
 
     keywords = ["bonzi", "bones you", "bones", "ponzi", "bondi", "banking", "bouncy", "monsey", "bonds it", "bons it", "juan the", "bungie", "bons the", "bonds the", "monte", "pansy", "bonds a", "bonds a", "bundy", "bonnie", "money", "bunny"]
@@ -71,7 +99,53 @@ def listen_for_bonzi(device_index=None):
                 time.sleep(.45)
                 command_active = True  # Enable command capture
 
+def run_setup_check():
+    missing_dependencies = llm.get_missing_dependencies()
+    if mic.pyaudio is None:
+        missing_dependencies.append("pyaudio")
+    for package_name in ("requests", "simpleaudio"):
+        if importlib.util.find_spec(package_name) is None:
+            missing_dependencies.append(package_name)
+    try:
+        load_vosk_classes()
+    except (ModuleNotFoundError, ImportError, AttributeError):
+        missing_dependencies.append("vosk")
+
+    checks = {
+        "Python dependencies": not missing_dependencies,
+        "Vosk model": os.path.isdir("vosk/vosk-model-small-en-us-0.15"),
+        "Canned responses": os.path.isdir("canned_responses") and any(
+            f.endswith(".wav") for f in os.listdir("canned_responses")
+        ),
+        "LLM environment": not llm.get_missing_environment(),
+        "Microphone config": mic.load_config() is not None,
+    }
+
+    for name, ok in checks.items():
+        print(f"{'OK' if ok else 'MISSING'} - {name}")
+
+    if missing_dependencies:
+        print(
+            "Run `pip install -r requirements.txt` to install: "
+            + ", ".join(missing_dependencies)
+        )
+
+    missing_env = llm.get_missing_environment()
+    if missing_env:
+        print(
+            "Copy helpers/.env.example to helpers/.env and set: "
+            + ", ".join(missing_env)
+        )
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run BonziAssist.")
+    parser.add_argument("--check", action="store_true", help="Check setup without starting the microphone loop.")
+    args = parser.parse_args()
+
+    if args.check:
+        run_setup_check()
+        raise SystemExit(0)
+
     config = mic.load_config()
     if config is None or config.get("prompt_every_time", False):
         config = mic.configure_microphone()

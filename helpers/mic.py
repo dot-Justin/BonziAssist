@@ -1,11 +1,26 @@
-import pyaudio
 import os
 import json
+from pathlib import Path
 
-CONFIG_FILE = "config\mic_config.json"
+try:
+    import pyaudio
+except ModuleNotFoundError:
+    pyaudio = None
+
+CONFIG_FILE = Path(__file__).resolve().parent.parent / "mic_config.json"
+
+
+def require_pyaudio():
+    if pyaudio is None:
+        raise ModuleNotFoundError(
+            "Missing Python package: pyaudio. Run `pip install -r requirements.txt` first. "
+            "If installation fails, install PortAudio or Visual C++ Build Tools as described in README.MD."
+        )
+    return pyaudio
 
 def list_microphones():
-    p = pyaudio.PyAudio()
+    audio = require_pyaudio()
+    p = audio.PyAudio()
     info = p.get_host_api_info_by_index(0)
     num_devices = info.get('deviceCount')
 
@@ -36,7 +51,10 @@ def get_device_index(num_devices, default_device_index, default_device_name):
 def load_config():
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
+            config = json.load(f)
+        if "device_index" not in config and "mic_index" in config:
+            config["device_index"] = config["mic_index"]
+        return config
     return None
 
 def save_config(config):
@@ -46,7 +64,8 @@ def save_config(config):
 def configure_microphone():
     print("Available microphones:")
     default_device_name = list_microphones()
-    p = pyaudio.PyAudio()
+    audio = require_pyaudio()
+    p = audio.PyAudio()
     num_devices = p.get_host_api_info_by_index(0).get('deviceCount')
     default_device_index = p.get_default_input_device_info().get('index')
     p.terminate()
