@@ -1,5 +1,6 @@
 pyaudio
 python-dotenv
 litellm
+requests
 simpleaudio
 vosk
