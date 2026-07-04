@@ -71,9 +71,12 @@ def listen_for_bonzi(device_index=None):
                 time.sleep(.45)
                 command_active = True  # Enable command capture
 
-if __name__ == "__main__":
+def main():
     config = mic.load_config()
     if config is None or config.get("prompt_every_time", False):
         config = mic.configure_microphone()
     device_index = config['device_index']
     listen_for_bonzi(device_index)
+
+if __name__ == "__main__":
+    main()

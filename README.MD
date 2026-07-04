@@ -14,13 +14,26 @@ BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activate
 
 ### Installation
 1. Clone this repository.
-2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). installed, and then run `pip install -r requirements.txt` to install the necessary packages.
-4. Set up your environment variables. Edit the `.env.example` file in `helpers\` and follow the instructions there. `[INSTRUCTIONS='Remove this line of instructions. Fill out the info below. Rename this file, and remove the .example. It should just be ".env" now.']`
+2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) installed.
+3. Install the required packages:
+```bash
+python -m pip install -r requirements.txt
+```
+4. Set up your environment variables:
+```bash
+copy .env.example .env
+```
+Then open `.env` and set `GROQ_API_KEY` and `LLM_PROVIDER`.
 
 ### Usage
-To start BonziAssist:
+Before starting BonziAssist, run the setup check:
 ```bash
-python main.py
+python start.py --check
+```
+
+If the check passes, start BonziAssist:
+```bash
+python start.py
 ```
 
 You will be prompted to configure your microphone settings upon the first run or if you choose to be prompted every time by the configuration settings.
