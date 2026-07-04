@@ -3,9 +3,36 @@ import pyaudio
 import wave
 import random
 import os
+import sys
 import time
 import json
+import urllib.request
+import zipfile
+from pathlib import Path
 from vosk import Model, KaldiRecognizer
+
+
+def ensure_vosk_model(model_dir="vosk"):
+    model_name = "vosk-model-small-en-us-0.15"
+    model_path = Path(model_dir) / model_name
+    if model_path.exists():
+        return str(model_path)
+
+    os.makedirs(model_dir, exist_ok=True)
+    print(f"Vosk model not found at {model_path}. Downloading...")
+    url = f"https://alphacephei.com/vosk/models/{model_name}.zip"
+    zip_path = Path(f"/tmp/{model_name}.zip")
+    try:
+        urllib.request.urlretrieve(url, zip_path)
+        with zipfile.ZipFile(zip_path, 'r') as zf:
+            zf.extractall(model_dir)
+        zip_path.unlink()
+        print(f"Model downloaded to {model_path}")
+    except Exception as e:
+        print(f"Failed to download Vosk model: {e}")
+        print(f"Please manually download from: https://alphacephei.com/vosk/models")
+        sys.exit(1)
+    return str(model_path)
 
 class BonziResponse:
     def __init__(self, canned_directory="canned_responses/"):
@@ -37,9 +64,8 @@ class BonziResponse:
         response = random.choice(self.canned_responses)
         self.play_audio(response)
 
-def listen_for_bonzi(device_index=None):
-    model_path = "vosk/vosk-model-small-en-us-0.15"
-    model = Model(model_path)
+def listen_for_bonzi(vosk_model_path, device_index=None):
+    model = Model(vosk_model_path)
     recognizer = KaldiRecognizer(model, 16000)
 
     bonzi_response = BonziResponse()
@@ -72,8 +98,9 @@ def listen_for_bonzi(device_index=None):
                 command_active = True  # Enable command capture
 
 if __name__ == "__main__":
+    vosk_model_path = ensure_vosk_model()
     config = mic.load_config()
     if config is None or config.get("prompt_every_time", False):
         config = mic.configure_microphone()
     device_index = config['device_index']
-    listen_for_bonzi(device_index)
+    listen_for_bonzi(vosk_model_path, device_index)
