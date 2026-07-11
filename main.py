@@ -72,6 +72,14 @@ def listen_for_bonzi(device_index=None):
                 command_active = True  # Enable command capture
 
 if __name__ == "__main__":
+    # --- BEGIN FIX BY Ludwig AC, by Ludwig Investing LLC ---
+    try:
+        with open('splash', 'r') as f:
+            print(f.read())
+    except FileNotFoundError:
+        pass
+    # --- END FIX BY Ludwig AC, by Ludwig Investing LLC ---
+
     config = mic.load_config()
     if config is None or config.get("prompt_every_time", False):
         config = mic.configure_microphone()
