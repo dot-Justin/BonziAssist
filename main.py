@@ -8,7 +8,7 @@ import json
 from vosk import Model, KaldiRecognizer
 
 class BonziResponse:
-    def __init__(self, canned_directory="canned_responses/"):
+    def __init__(self, canned_directory=os.path.join("canned_responses", "")):
         self.canned_directory = canned_directory
         self.canned_responses = [os.path.join(canned_directory, f) for f in os.listdir(canned_directory) if f.endswith('.wav')]
         self.preloaded_audio = self.preload_audio_files()
@@ -38,7 +38,11 @@ class BonziResponse:
         self.play_audio(response)
 
 def listen_for_bonzi(device_index=None):
-    model_path = "vosk/vosk-model-small-en-us-0.15"
+    model_path = os.path.join("vosk", "vosk-model-small-en-us-0.15")
+    if not os.path.exists(model_path):
+        print(f"Error: VOSK model not found at '{model_path}'.")
+        print("Download it from https://alphacephei.com/vosk/models and extract to the 'vosk/' directory.")
+        return
     model = Model(model_path)
     recognizer = KaldiRecognizer(model, 16000)
 

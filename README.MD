@@ -5,7 +5,7 @@
 ## BonziAssist: Your New (Old) Assistant!
 This project uses the [TETYYS generator](https://www.tetyys.com/SAPI4/). Also see: [BonziBuddy-TTS](https://github.com/dot-Justin/BonziBuddy-TTS).
 ### ⚠️ Do Not Abuse the API ⚠️
-BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activated form, allowing you to interact with an AI through spoken commands. Here’s a bit more about what makes BonziAssist special and how to use it.
+BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activated form, allowing you to interact with an AI through spoken commands. Here's a bit more about what makes BonziAssist special and how to use it.
 
 ### Features
 - **Voice Activation**: Simply say "`Bonzi`" and once you hear Bonzi confirm he's listening, you're ready to go!
@@ -13,9 +13,32 @@ BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activate
 - **Real-Time Interaction**: Communicate in real-time, with responses generated through a lightweight LLM.
 
 ### Installation
-1. Clone this repository.
-2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). installed, and then run `pip install -r requirements.txt` to install the necessary packages.
-4. Set up your environment variables. Edit the `.env.example` file in `helpers\` and follow the instructions there. `[INSTRUCTIONS='Remove this line of instructions. Fill out the info below. Rename this file, and remove the .example. It should just be ".env" now.']`
+
+1. **Clone this repository:**
+   ```bash
+   git clone https://github.com/dot-Justin/BonziAssist.git
+   cd BonziAssist
+   ```
+
+2. **Install Python 3.8+** from [python.org](https://www.python.org/downloads/).
+   - **Windows users:** Also install [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up your environment variables:**
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `.env` and fill in your API key. You'll need:
+   - `LLM_PROVIDER` — your LLM provider (e.g., `groq`, `openai`)
+   - `GROQ_API_KEY` — your API key for the chosen provider
+
+5. **Download the VOSK speech recognition model:**
+   - Download [vosk-model-small-en-us-0.15](https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip)
+   - Extract it into the `vosk/` directory so the path looks like: `vosk/vosk-model-small-en-us-0.15/`
 
 ### Usage
 To start BonziAssist:
