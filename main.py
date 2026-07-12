@@ -6,6 +6,38 @@ import os
 import time
 import json
 from vosk import Model, KaldiRecognizer
+import urllib.request
+import zipfile
+
+VOSK_MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip"
+VOSK_MODEL_DIR = "vosk"
+VOSK_MODEL_NAME = "vosk-model-small-en-us-0.15"
+
+def download_vosk_model():
+    """Download Vosk model if not present"""
+    model_path = os.path.join(VOSK_MODEL_DIR, VOSK_MODEL_NAME)
+    
+    if os.path.exists(model_path):
+        print(f"Vosk model found at {model_path}")
+        return model_path
+    
+    print("Vosk model not found. Downloading...")
+    os.makedirs(VOSK_MODEL_DIR, exist_ok=True)
+    
+    zip_path = os.path.join(VOSK_MODEL_DIR, f"{VOSK_MODEL_NAME}.zip")
+    try:
+        urllib.request.urlretrieve(VOSK_MODEL_URL, zip_path)
+        print("Download complete. Extracting...")
+        
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(VOSK_MODEL_DIR)
+        
+        os.remove(zip_path)
+        print(f"Vosk model installed at {model_path}")
+        return model_path
+    except Exception as e:
+        print(f"Failed to download Vosk model: {e}")
+        raise
 
 class BonziResponse:
     def __init__(self, canned_directory="canned_responses/"):
@@ -38,7 +70,7 @@ class BonziResponse:
         self.play_audio(response)
 
 def listen_for_bonzi(device_index=None):
-    model_path = "vosk/vosk-model-small-en-us-0.15"
+    model_path = download_vosk_model()
     model = Model(model_path)
     recognizer = KaldiRecognizer(model, 16000)
 
@@ -47,7 +79,7 @@ def listen_for_bonzi(device_index=None):
     stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000, input_device_index=device_index)
     stream.start_stream()
 
-    keywords = ["bonzi", "bones you", "bones", "ponzi", "bondi", "banking", "bouncy", "monsey", "bonds it", "bons it", "juan the", "bungie", "bons the", "bonds the", "monte", "pansy", "bonds a", "bonds a", "bundy", "bonnie", "money", "bunny"]
+    keywords = ["bonzi", "bones you", "bones", "ponzi", "bondi", "banking", "bouncy", "monsey", "bonds it", "bons it", "juan the", "bungie", "bons the", "bonds the", "monte", "pansy", "bonds a"]
     command_active = False
 
     while True:
