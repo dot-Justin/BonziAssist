@@ -1,82 +1,81 @@
 <div style="text-align: center;">
-    <img src="assets/BonziASSIST_bg.png" alt="BonziAssist" style="width:70%; height:auto;">
+    <img src="assets/BonziASSIST_bg.png" alt="Shiny Text" style="width:70%; height:auto;">
 </div>
 
 ## BonziAssist: Your New (Old) Assistant!
+This project uses the [TETYYS generator](https://www.tetyys.com/SAPI4/). Also see: [BonziBuddy-TTS](https://github.com/dot-Justin/BonziBuddy-TTS).
+### ⚠️ Do Not Abuse the API ⚠️
+BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activated form, allowing you to interact with an AI through spoken commands.
 
-BonziAssist is a voice-activated assistant using Vosk speech recognition, LiteLLM, and the TETYYS SAPI4 voice API.
-
-### Prerequisites
-
-- Python 3
-- Visual C++ Build Tools on Windows, as required by PyAudio
-- A microphone
-- A LiteLLM-compatible API key configured in `helpers/.env`
-- The Vosk model `vosk-model-small-en-us-0.15`
+### Features
+- **Voice Activation**: Simply say "`Bonzi`" and once you hear Bonzi confirm he's listening, you're ready to go!
+- **Text-to-Speech**: Utilizes the nostalgic BonziBuddy voice for responses, thanks to the [TETYYS SAPI4 API](https://www.tetyys.com/SAPI4/).
+- **Real-Time Interaction**: Communicate in real-time, with responses generated through a lightweight LLM.
 
 ### Installation
-
-1. Clone the repository and enter it:
-
+1. Clone this repository and enter it:
    ```bash
    git clone https://github.com/dot-Justin/BonziAssist.git
    cd BonziAssist
    ```
-
-2. Install dependencies:
-
+2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) on Windows, then install the dependencies:
    ```bash
    python -m pip install -r requirements.txt
    ```
-
-3. Configure the environment file:
-
-   - Copy `helpers/.env.example` to `helpers/.env`.
-   - Remove the instruction line and provide the requested API configuration.
-
-4. Download `vosk-model-small-en-us-0.15` from the [Vosk models page](https://alphacephei.com/vosk/models).
-
-5. Extract it to:
-
+3. Copy `helpers/.env.example` to `.env` in the repository root. Remove the instruction line and fill in `LLM_PROVIDER` and `GROQ_API_KEY`.
+4. Download `vosk-model-small-en-us-0.15` from the [Vosk models page](https://alphacephei.com/vosk/models) and extract it to:
    ```text
    BonziAssist/vosk/vosk-model-small-en-us-0.15/
    ```
-
-   A different location can be used by setting `BONZI_VOSK_MODEL` to the extracted model directory.
+   To keep the model elsewhere, set `BONZI_VOSK_MODEL` to the extracted model directory.
 
 ### Usage
-
 Start BonziAssist from the repository root:
-
 ```bash
 python main.py
 ```
 
-On the first run, select a microphone. The selection is stored in the repository-root `mic_config.json`. Set `BONZI_MIC_CONFIG` to use a custom configuration path.
-
-Startup now reports an actionable error when the Vosk model is missing instead of failing inside the Vosk library.
+You will be prompted to configure your microphone settings on the first run. The selection is stored in `mic_config.json`. Delete that file to select a different microphone, or set `BONZI_MIC_CONFIG` to use a custom configuration path.
 
 ### Troubleshooting
-
 - **Vosk model not found:** verify the extracted folder name and location, or set `BONZI_VOSK_MODEL`.
-- **Microphone selection is wrong:** delete `mic_config.json` and start again.
-- **PyAudio installation fails:** install the platform audio development tools and Visual C++ Build Tools on Windows, then retry the dependency installation.
-- **Environment values are missing:** verify that `helpers/.env` exists and contains the values described in `helpers/.env.example`.
+- **Environment values are missing:** verify that `.env` exists in the repository root and contains the values from `helpers/.env.example`.
+- **PyAudio installation fails:** install the platform audio development tools and Visual C++ Build Tools on Windows, then retry dependency installation.
 
-### Features
+## TODO
 
-- Voice activation using the word “Bonzi” and common recognition variants
-- Speech recognition through Vosk
-- Responses generated through LiteLLM
-- BonziBuddy-style text-to-speech through TETYYS SAPI4
+- [x] **Add LiteLLM**: Enable Bonzi to talk back to you
+- [ ] **HIGH PRIO: Improve STT Accuracy**: Potentially use a bigger VOSK model
+- [ ] **Improve STT Speed**: Potentially use a different package
+- [ ] **Improve TTS Speed**: Find a way to run locally for quicker responses
+- [ ] **Offline Functionality**: Use fully offline APIs such as Ollama for those with beefier computers
+- [ ] **Add Voice Volume Control**
+- [ ] **Add simple windows functions**: Such as Media control, opening apps, etc.
+- [ ] **Add interruption support**: Potentially via a hotkey (press esc to interrupt)
+- [ ] **Add fancy splash screen**
+
+#### Continuous goals
+
+- When VOSK misunderstands, add to the list of phrases Bonzi will respond to
+- Update system prompt to give more personality and functionality
+- Optimize Performance
+
+Contributors are welcome to help with these tasks. If you are interested, please fork the repository, make your changes, and submit a pull request. If you have any questions, feel free to open an issue and ask away!
+
+## How it Works
+1. Listening: The system starts by listening for the activation word "Bonzi". Once heard, it's ready to receive commands.
+2. Processing: Speech is converted to text and processed by an LLM to understand the context and generate an appropriate response.
+3. Responding: The response is then converted to speech using the SAPI4 API, maintaining the classic voice of BonziBuddy.
 
 ## Contributing
-
-Contributions are welcome. For major changes, open an issue first to discuss the proposed scope.
+First of all, I appreciate anyone being excited about this project. That being said, contributions are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ## Acknowledgments
-
-- [TETYYS SAPI4](https://www.tetyys.com/SAPI4/)
-- [BonziBuddy-TTS](https://github.com/dot-Justin/BonziBuddy-TTS)
-- [Vosk](https://alphacephei.com/vosk/)
-- LiteLLM, SimpleAudio, PyAudio, and Python-dotenv
+- **SAPI4**: The Text-to-Speech engine that allows BonziAssist to speak with the classic BonziBuddy voice. [Visit TETYYS's online SAPI4](https://www.tetyys.com/SAPI4/).
+- **BonziBuddy-TTS GitHub Project**: Inspired the integration of the BonziBuddy voice into this project. [View the repository](https://github.com/dot-Justin/BonziBuddy-TTS).
+- **Vosk Speech Recognition**: Provides the voice recognition capabilities required to interpret user commands. [Learn more about Vosk](https://alphacephei.com/vosk/).
+- **LiteLLM**: For processing natural language and generating appropriate responses.
+- **SimpleAudio**: Used for playing back audio responses generated by the system.
+- **PyAudio**: Handles microphone input and audio stream management.
+- **Python-dotenv**: For managing environment variables in a `.env` file.
+- **GitHub Community**: For all open-source contributors who developed the libraries used by this project.
