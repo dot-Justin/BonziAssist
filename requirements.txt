@@ -1,5 +1,4 @@
 pyaudio
 python-dotenv
 litellm
-simpleaudio
 vosk
