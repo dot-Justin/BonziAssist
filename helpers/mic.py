@@ -1,8 +1,11 @@
 import pyaudio
 import os
 import json
+from pathlib import Path
 
-CONFIG_FILE = "config\mic_config.json"
+# This gets the root directory of the project regardless of where it's run from
+ROOT_DIR = Path(__file__).parent.parent
+CONFIG_FILE = str(ROOT_DIR / "mic_config.json")
 
 def list_microphones():
     p = pyaudio.PyAudio()
