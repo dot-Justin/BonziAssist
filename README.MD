@@ -13,17 +13,24 @@ BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activate
 - **Real-Time Interaction**: Communicate in real-time, with responses generated through a lightweight LLM.
 
 ### Installation
+
+**New here?** Follow the step-by-step guide: [GETTING_STARTED.md](./GETTING_STARTED.md)
+
 1. Clone this repository.
-2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). installed, and then run `pip install -r requirements.txt` to install the necessary packages.
-4. Set up your environment variables. Edit the `.env.example` file in `helpers\` and follow the instructions there. `[INSTRUCTIONS='Remove this line of instructions. Fill out the info below. Rename this file, and remove the .example. It should just be ".env" now.']`
+2. Install [Python 3.10+](https://www.python.org/downloads/) and [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (Windows).
+3. Create a venv and install packages: `pip install -r requirements.txt`
+4. Configure the LLM: copy `helpers/.env.example` → `helpers/.env`, then set `GROQ_API_KEY` (remove placeholder instruction lines).
+5. Ensure the Vosk model exists at `vosk/vosk-model-small-en-us-0.15`.
 
 ### Usage
-To start BonziAssist:
 ```bash
 python main.py
 ```
 
-You will be prompted to configure your microphone settings upon the first run or if you choose to be prompted every time by the configuration settings.
+1. Pick your microphone when prompted (first run).
+2. Say **“Bonzi”**, wait for the acknowledgment sound, then speak your request.
+
+If the UI/flow feels backwards or nothing responds, see the troubleshooting table in [GETTING_STARTED.md](./GETTING_STARTED.md).
 
 ## TODO
 
