@@ -2,7 +2,7 @@ import pyaudio
 import os
 import json
 
-CONFIG_FILE = "config\mic_config.json"
+CONFIG_FILE = "mic_config.json"
 
 def list_microphones():
     p = pyaudio.PyAudio()
@@ -36,7 +36,10 @@ def get_device_index(num_devices, default_device_index, default_device_name):
 def load_config():
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
+            data = json.load(f)
+            if "mic_index" in data and "device_index" not in data:
+                data["device_index"] = data["mic_index"]
+            return data
     return None
 
 def save_config(config):
