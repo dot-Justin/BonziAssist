@@ -4,6 +4,8 @@
 
 ## BonziAssist: Your New (Old) Assistant!
 This project uses the [TETYYS generator](https://www.tetyys.com/SAPI4/). Also see: [BonziBuddy-TTS](https://github.com/dot-Justin/BonziBuddy-TTS).
+
+New here? Follow the step-by-step [getting started guide](GETTING_STARTED.md).
 ### ⚠️ Do Not Abuse the API ⚠️
 BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activated form, allowing you to interact with an AI through spoken commands. Here’s a bit more about what makes BonziAssist special and how to use it.
 
