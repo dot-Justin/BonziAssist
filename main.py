@@ -9,9 +9,9 @@ from vosk import Model, KaldiRecognizer
 
 class BonziResponse:
     def __init__(self, canned_directory="canned_responses/"):
-        self.canned_directory = canned_directory
-        self.canned_responses = [os.path.join(canned_directory, f) for f in os.listdir(canned_directory) if f.endswith('.wav')]
-        self.preloaded_audio = self.preload_audio_files()
+            self.canned_directory = canned_directory
+            self.canned_responses = [os.path.join(canned_directory, f) for f in os.listdir(canned_directory) if f.endswith('.wav')]
+            self.preloaded_audio = self.preload_audio_files()
 
     def preload_audio_files(self):
         audio_files = {}
