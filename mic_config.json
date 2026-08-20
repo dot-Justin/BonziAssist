@@ -1,1 +1,4 @@
-{"mic_index": 53}
+{
+    "device_index": 53,
+    "prompt_every_time": false
+}

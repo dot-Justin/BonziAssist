@@ -1,8 +1,13 @@
 import pyaudio
 import os
 import json
+from pathlib import Path
 
-CONFIG_FILE = "config\mic_config.json"
+# Anchor the config path to the repository root so it resolves regardless of
+# the working directory or the OS. The previous backslash path
+# ("config\mic_config.json") only worked on Windows from the repo root, and
+# the file actually lives at the repo root, not in a config/ directory.
+CONFIG_FILE = str(Path(__file__).resolve().parent.parent / "mic_config.json")
 
 def list_microphones():
     p = pyaudio.PyAudio()
