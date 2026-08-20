@@ -73,7 +73,10 @@ def listen_for_bonzi(device_index=None):
 
 if __name__ == "__main__":
     config = mic.load_config()
-    if config is None or config.get("prompt_every_time", False):
+    # Re-run the setup wizard if there is no config, the user asked to be
+    # prompted every time, or the config is missing the device_index key
+    # (e.g. a stale config written with the old "mic_index" schema).
+    if config is None or config.get("prompt_every_time", False) or "device_index" not in config:
         config = mic.configure_microphone()
     device_index = config['device_index']
     listen_for_bonzi(device_index)
