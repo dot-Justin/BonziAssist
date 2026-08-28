@@ -39,6 +39,10 @@ class BonziResponse:
 
 def listen_for_bonzi(device_index=None):
     model_path = "vosk/vosk-model-small-en-us-0.15"
+    if not os.path.isdir(model_path):
+        raise SystemExit(
+            f"Vosk model missing at {model_path}. Put the small English model in that folder, then run: python main.py"
+        )
     model = Model(model_path)
     recognizer = KaldiRecognizer(model, 16000)
 
@@ -58,22 +62,31 @@ def listen_for_bonzi(device_index=None):
             print(f"Heard: {text}")
 
             if command_active:
-                # Directly use the first captured text as the command
                 if text:
                     llm_response = llm.request(text.strip())
                     print(f"LLM response: {llm_response}")
                     tts.say(llm_response)
-                command_active = False  # Reset after processing
+                command_active = False
 
             words = text.split()
             if any(keyword in text for keyword in keywords) and len(words) < 4 and not command_active:
                 bonzi_response.play_random_response()
                 time.sleep(.45)
-                command_active = True  # Enable command capture
+                command_active = True
+
+def _device_index(config):
+    if not config:
+        return None
+    if "device_index" in config:
+        return config["device_index"]
+    if "mic_index" in config:
+        return config["mic_index"]
+    return None
 
 if __name__ == "__main__":
+    print("BonziAssist: run python main.py, pick a mic if asked, then say Bonzi.")
     config = mic.load_config()
-    if config is None or config.get("prompt_every_time", False):
+    if config is None or config.get("prompt_every_time", False) or _device_index(config) is None:
         config = mic.configure_microphone()
-    device_index = config['device_index']
+    device_index = _device_index(config)
     listen_for_bonzi(device_index)
