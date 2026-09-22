@@ -5,7 +5,7 @@
 ## BonziAssist: Your New (Old) Assistant!
 This project uses the [TETYYS generator](https://www.tetyys.com/SAPI4/). Also see: [BonziBuddy-TTS](https://github.com/dot-Justin/BonziBuddy-TTS).
 ### ⚠️ Do Not Abuse the API ⚠️
-BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activated form, allowing you to interact with an AI through spoken commands. Here’s a bit more about what makes BonziAssist special and how to use it.
+BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activated form, allowing you to interact with an AI through spoken commands. Here's a bit more about what makes BonziAssist special and how to use it.
 
 ### Features
 - **Voice Activation**: Simply say "`Bonzi`" and once you hear Bonzi confirm he's listening, you're ready to go!
@@ -14,8 +14,13 @@ BonziAssist revives the classic BonziBuddy assistant in a modern, voice-activate
 
 ### Installation
 1. Clone this repository.
-2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). installed, and then run `pip install -r requirements.txt` to install the necessary packages.
-4. Set up your environment variables. Edit the `.env.example` file in `helpers\` and follow the instructions there. `[INSTRUCTIONS='Remove this line of instructions. Fill out the info below. Rename this file, and remove the .example. It should just be ".env" now.']`
+2. Ensure you have [Python](https://www.python.org/downloads/) and [Visual CPP Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (Windows) installed, then run `pip install -r requirements.txt` to install the necessary packages.
+3. **Download the VOSK model**: Download `vosk-model-small-en-us-0.15.zip` from [here](https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip), extract it, and place the `vosk-model-small-en-us-0.15` folder inside the `vosk/` directory. The final path should be `vosk/vosk-model-small-en-us-0.15/`.
+4. Set up your environment variables. Copy `.env.example` to `.env` in the project root and fill in your API keys:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` and set your `GROQ_API_KEY` and `LLM_PROVIDER` (e.g., `groq`).
 
 ### Usage
 To start BonziAssist:

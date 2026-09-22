@@ -2,7 +2,7 @@ import pyaudio
 import os
 import json
 
-CONFIG_FILE = "config\mic_config.json"
+CONFIG_FILE = os.path.join("config", "mic_config.json")
 
 def list_microphones():
     p = pyaudio.PyAudio()
@@ -40,6 +40,7 @@ def load_config():
     return None
 
 def save_config(config):
+    os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
     with open(CONFIG_FILE, "w") as f:
         json.dump(config, f, indent=4)
 
