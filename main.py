@@ -50,6 +50,8 @@ def listen_for_bonzi(device_index=None):
     keywords = ["bonzi", "bones you", "bones", "ponzi", "bondi", "banking", "bouncy", "monsey", "bonds it", "bons it", "juan the", "bungie", "bons the", "bonds the", "monte", "pansy", "bonds a", "bonds a", "bundy", "bonnie", "money", "bunny"]
     command_active = False
 
+    print("Bonzi is listening...")
+
     while True:
         data = stream.read(4000, exception_on_overflow=False)
         if recognizer.AcceptWaveform(data):
